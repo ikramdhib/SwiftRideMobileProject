@@ -6,7 +6,6 @@
 package edu.swiftride.entities;
 
 
-import java.text.*;
 
 import java.util.Date;
 /**
@@ -24,14 +23,32 @@ public class User {
     private String age;
 
    
-    private String photo_personel;
-    private String photo_permis;
+    private byte[] photo_personel;
+    private byte[] photo_permis;
+     private String photo_personel_path;
+    private String photo_permis_path;
+
+    public String getPhoto_personel_path() {
+        return photo_personel_path;
+    }
+
+    public void setPhoto_personel_path(String photo_personel_path) {
+        this.photo_personel_path = photo_personel_path;
+    }
+
+    public String getPhoto_permis_path() {
+        return photo_permis_path;
+    }
+
+    public void setPhoto_permis_path(String photo_permis_path) {
+        this.photo_permis_path = photo_permis_path;
+    }
     private String num_permis;
     private String ville;
     private String num_tel;
     private String email;
     private String password;
-    public User(String nom, String prenom, String cin, Date date_naiss,String age, String photo_personel, String photo_permis, String num_permis, String ville, String num_tel, int idrole, String email, String password) {
+    public User(String nom, String prenom, String cin, Date date_naiss,String age, byte[] photo_personel, byte[] photo_permis, String num_permis, String ville, String num_tel, int idrole, String email, String password) {
         
         this.nom = nom;
         this.prenom = prenom;
@@ -127,19 +144,19 @@ public class User {
 
  
 
-    public String getPhoto_personel() {
+    public byte[] getPhoto_personel() {
         return photo_personel;
     }
 
-    public void setPhoto_personel(String photo_personel) {
+    public void setPhoto_personel(byte[] photo_personel) {
         this.photo_personel = photo_personel;
     }
 
-    public String getPhoto_permis() {
+    public byte[] getPhoto_permis() {
         return photo_permis;
     }
 
-    public void setPhoto_permis(String photo_permis) {
+    public void setPhoto_permis(byte[] photo_permis) {
         this.photo_permis = photo_permis;
     }
 
@@ -192,9 +209,10 @@ public void setDate_naiss(Date date_naiss){
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", idrole=" + idrole + ", nom=" + nom + ", prenom=" + prenom + ", cin=" + cin + ", date_naiss=" + date_naiss + ", age=" + age + ", photo_personel=" + photo_personel + ", photo_permis=" + photo_permis + ", num_permis=" + num_permis + ", ville=" + ville + ", num_tel=" + num_tel + ", email=" + email + ", password=" + password + '}';
+        return "User{" + "id=" + id + ", idrole=" + idrole + ", nom=" + nom + ", prenom=" + prenom + ", cin=" + cin + ", date_naiss=" + date_naiss + ", age=" + age + ", photo_personel=" + photo_personel + ", photo_permis=" + photo_permis + ", photo_personel_path=" + photo_personel_path + ", photo_permis_path=" + photo_permis_path + ", num_permis=" + num_permis + ", ville=" + ville + ", num_tel=" + num_tel + ", email=" + email + ", password=" + password + '}';
     }
 
+  
    
 
 

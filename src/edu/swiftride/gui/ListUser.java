@@ -5,13 +5,16 @@
  */
 package edu.swiftride.gui;
 
-import com.codename1.ui.CheckBox;
+import com.codename1.ui.Button;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
+import com.codename1.ui.Label;
 import com.codename1.ui.layouts.BoxLayout;
 import edu.swiftride.entities.User;
 import edu.swiftride.services.UserService;
-
+import com.codename1.ui.Dialog;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
 
 import java.util.ArrayList;
 
@@ -34,9 +37,24 @@ public class ListUser extends Form{
     }
 
     public void addElement(User u) {
-        CheckBox cb = new CheckBox(u.getNom());
-        cb.setEnabled(false);
-        add(cb);
+        Label tfname = new Label(u.getNom());
+        Label tfprenom = new Label(u.getPrenom());
+        Label tfemail = new Label(u.getEmail());
+        Label tfcin = new Label(u.getCin());
+        Label tfnum_tel = new Label(u.getNum_tel());
+        Label tfnum_permis = new Label(u.getNum_permis());
+        Button btndelete =new Button("delete");
+         btndelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+       if(UserService.getinstance().deleteUser(u.getId())){
+                            Dialog.show("Alert","Utilisateur Supprimer","ok",null);
+                        }else {
+                            Dialog.show("Alert","Err while connecting to server ","ok",null);
+                        }
+            }
+         });
+        addAll(tfname,tfprenom,tfemail,tfcin,tfnum_tel,tfnum_permis,btndelete);
         
         
     }

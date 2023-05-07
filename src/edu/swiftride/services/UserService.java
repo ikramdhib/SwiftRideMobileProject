@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package edu.swiftride.services;
+import com.codename1.components.ImageViewer;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
@@ -11,6 +12,7 @@ import com.codename1.io.MultipartRequest;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.l10n.SimpleDateFormat;
+import com.codename1.ui.EncodedImage;
 
 import com.codename1.ui.events.ActionListener;
 import edu.swiftride.entities.User;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import com.codename1.ui.Image;
 import java.util.Map;
 
 /**
@@ -37,13 +40,18 @@ public class UserService {
       private static final String NUM_TEL_PARAM = "num_tel";
       private static final String LOGIN_PARAM = "login";
       private static final String MDP_PARAM = "mdp";
-      private static final String PHOTO_PERSONNEL_PARAM = "photo_personnel";
-      private static final String PHOTO_PERMIS_PARAM = "photo_permis";
-
+      private static final String OLDMDP_PARAM = "oldmdp";
+      private static final String PHOTO_PERSONNEL_PARAM = "photo_personnel_data";
+      private static final String PHOTO_PERMIS_PARAM = "photo_permis_data";
+User user;
       ArrayList<User> users ;
     ConnectionRequest req;
     MultipartRequest request;
     public boolean resultOk;
+     Image img;
+     Image img_photo_personnel;
+     Image img_photo_permis;
+    EncodedImage enc ; 
     //2  creer un attribut de type de la classe en question (static)
     public static UserService instance = null;
     
@@ -66,12 +74,11 @@ public class UserService {
         return instance;
     }
     
-    public String loginUser(String email,String password){
-            String  message="";
+    public User loginUser(String email,String password){
               String url = Statics.LOGIN_URL;
               req.setUrl(url);
               req.setPost(false);
-              req.addArgument(LOGIN_PARAM, email);
+              req.addArgument(LOGIN_PARAM,email);
               req.addArgument(MDP_PARAM, password);
               
               
@@ -83,16 +90,22 @@ req.addResponseListener(new ActionListener<NetworkEvent>() {
             //
             
             Map<String, Object> responseData = new JSONParser().parseJSON(new InputStreamReader(new ByteArrayInputStream(req.getResponseData()), "UTF-8"));
-            String message = (String) responseData.get("message");
-            System.out.println(message);
+            String message = new String(req.getResponseData());
+      
+            if(message.equals("email ou mot de passe incorrect"))
+                user = new User();
+            else
+              user = parseUser(new String(req.getResponseData()));
+             System.out.println(user);
             req.removeResponseListener(this);
+            
         } catch (IOException ex) {
             System.out.println(ex);
         }
     }
 });
               NetworkManager.getInstance().addToQueueAndWait(req);
-              return message;
+              return user;
        
         
         
@@ -107,65 +120,55 @@ req.addResponseListener(new ActionListener<NetworkEvent>() {
     
     //methode d'ajout
     public boolean addUser(User u){
-          try {
-              
-              String url = Statics.ADD_USER_URL;
-              SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-              String dateString = format.format(u.getDate_naiss());
-              request.setUrl(url);
-              request.setPost(false);
-                request.addArgument(NOM_PARAM,u.getNom() );
-              request.addArgument(PRENOM_PARAM, u.getPrenom());
-              request.addArgument(DATE_NAISS_PARAM,dateString  );
-              request.addArgument(CIN_PARAM, u.getCin());
-              request.addArgument(NUM_PERMIS_PARAM, u.getNum_permis());
-              request.addArgument(VILLE_PARAM, u.getVille());
-              request.addArgument(NUM_TEL_PARAM, u.getNum_tel());
-              request.addArgument(LOGIN_PARAM, u.getEmail());
-              request.addArgument(MDP_PARAM, u.getPassword());
-              
-              //--------------------upload photo-------------------------
-              
-              request.addData("photo_personel_data", u.getPhoto_personel(), "image/jpeg");
-              request.addData("photo_personel_data", u.getPhoto_personel(), "image/jpg");
-              request.addData("photo_personel_data", u.getPhoto_personel(), "image/png");
-              request.addData("photo_permis_data", u.getPhoto_permis(), "image/jpeg");
-              request.addData("photo_permis_data", u.getPhoto_permis(), "image/jpg");
-              request.addData("photo_permis_data", u.getPhoto_permis(), "image/png");
-              //request.addArgument(PHOTO_PERSONNEL_PARAM, u.getPhoto_personel());
-              //request.addArgument(PHOTO_PERSONNEL_PARAM, u.getPhoto_permis());
-              request.setFailSilently(true);
-request.addResponseListener(new ActionListener<NetworkEvent>() {
-    @Override
-    public void actionPerformed(NetworkEvent evt) {
-        resultOk = request.getResponseCode() == 200; //si le code return 200
-                      //
-                      request.removeResponseListener(this);
-    }
-});
-              NetworkManager.getInstance().addToQueueAndWait(request);
-              return resultOk;
-          } catch (IOException ex) {
-              System.out.println(ex);
-               return resultOk;
-          }
+        String url = Statics.ADD_USER_URL;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = format.format(u.getDate_naiss());
+        request.setUrl(url);
+        request.setPost(false);
+        request.addArgument(NOM_PARAM,u.getNom() );
+        request.addArgument(PRENOM_PARAM, u.getPrenom());
+        request.addArgument(DATE_NAISS_PARAM,dateString  );
+        request.addArgument(CIN_PARAM, u.getCin()); 
+        request.addArgument(NUM_PERMIS_PARAM, u.getNum_permis());
+        request.addArgument(VILLE_PARAM, u.getVille());
+        request.addArgument(NUM_TEL_PARAM, u.getNum_tel());
+        request.addArgument(LOGIN_PARAM, u.getEmail());
+        request.addArgument(MDP_PARAM, u.getPassword());
+        //--------------------upload photo-------------------------
+        
+        request.addData(PHOTO_PERSONNEL_PARAM, u.getPhoto_personel(), "image/jpeg");
+        request.addData(PHOTO_PERMIS_PARAM, u.getPhoto_permis(), "image/jpeg");
+        //request.addArgument(PHOTO_PERSONNEL_PARAM, u.getPhoto_personel());
+        //request.addArgument(PHOTO_PERSONNEL_PARAM, u.getPhoto_permis());
+        request.setFailSilently(true);
+        request.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOk = request.getResponseCode() == 200; //si le code return 200
+                //
+                request.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(request);
+        return resultOk;
        
         
         
     }
     
-        public boolean updateUser(User u){
+        public boolean updateUser(User u,String oldPassword){
               
               String url = Statics.UPDATE_USER_URL;
               req.setUrl(url);
               req.setPost(false);
               req.addArgument(ID_PARAM,String.valueOf(u.getId()));
-                req.addArgument(NOM_PARAM,u.getNom() );
+               req.addArgument(NOM_PARAM,u.getNom() );
               req.addArgument(PRENOM_PARAM, u.getPrenom());
               req.addArgument(VILLE_PARAM, u.getVille());
               req.addArgument(NUM_TEL_PARAM, u.getNum_tel());
               req.addArgument(LOGIN_PARAM, u.getEmail());
               req.addArgument(MDP_PARAM, u.getPassword());
+              req.addArgument(OLDMDP_PARAM, oldPassword);
               
             
 req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -173,6 +176,7 @@ req.addResponseListener(new ActionListener<NetworkEvent>() {
     public void actionPerformed(NetworkEvent evt) {
         resultOk = req.getResponseCode() == 200; //si le code return 200
                       //
+                      System.out.println(resultOk);
                       req.removeResponseListener(this);
     }
 });
@@ -196,6 +200,8 @@ req.addResponseListener(new ActionListener<NetworkEvent>() {
             for (Map<String, Object> obj : list) {
                 User u = new User();
                 float id = Float.parseFloat(obj.get("id").toString());
+                
+               
                 u.setId((int) id);
                 u.setNom(obj.get("nom").toString());
                 u.setPrenom(obj.get("prenom").toString());
@@ -204,6 +210,7 @@ req.addResponseListener(new ActionListener<NetworkEvent>() {
                 u.setNum_permis(obj.get("num_permis").toString());
                 u.setNum_tel(obj.get("num_tel").toString());
                 u.setVille(obj.get("ville").toString());
+                
                 /*if (obj.get("name") == null) {
                     t.setName("null");
                 } else {
@@ -218,7 +225,46 @@ req.addResponseListener(new ActionListener<NetworkEvent>() {
         return users;
     }
     
-    
+       public User parseUser(String jsonText) {
+            User u = new User();
+        try {
+
+            JSONParser j = new JSONParser();
+            Map<String, Object> obj
+                    = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
+
+                float id = Float.parseFloat(obj.get("id").toString());
+                 Map<String, Object> role = (Map<String, Object>) obj.get("role");
+                 float idrole = Float.parseFloat(role.get("id").toString());
+            System.out.println(obj.get("photoPersonel").toString());
+        // l'image dans l'imageViewr
+                 System.out.println(idrole);
+                u.setId((int) id);
+                u.setNom(obj.get("nom").toString());
+                u.setPrenom(obj.get("prenom").toString());
+                u.setEmail(obj.get("login").toString());
+                u.setCin(obj.get("cin").toString());
+                u.setNum_permis(obj.get("numPermis").toString());
+                u.setNum_tel(obj.get("numTel").toString());
+                u.setVille(obj.get("ville").toString());
+                u.setPhoto_personel_path(obj.get("photoPersonel").toString());
+                u.setPhoto_permis_path(obj.get("photoPermis").toString());
+                u.setIdrole((int) idrole);
+                
+                /*if (obj.get("name") == null) {
+                    t.setName("null");
+                } else {
+                    t.setName(obj.get("name").toString());
+                }*/
+                
+            return u;
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+           System.out.println(u);
+        return u;
+    }
     
     //methode d'affichage
      public ArrayList<User> getAllUsers(){

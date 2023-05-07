@@ -22,9 +22,10 @@ public class Home extends Form {
         add(new Label("choose an option "));
         Button b1 = new Button("Crée un compte ");
         Button b2 = new Button("se connecter");
+
         
         b1.addActionListener(l -> new addUser(this).show());
-        b2.addActionListener(l -> new ListUser(this).show());
+        b2.addActionListener(l -> new login(this).show());
         addAll(b1,b2);
                 
     }
