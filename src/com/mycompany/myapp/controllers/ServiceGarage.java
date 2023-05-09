@@ -146,8 +146,7 @@ public class ServiceGarage {
         
         con.setUrl(url);
         con.setPost(false);
-        con.addArgument("id", String.valueOf(id));
-        
+        con.addArgument("id", id+"");
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {

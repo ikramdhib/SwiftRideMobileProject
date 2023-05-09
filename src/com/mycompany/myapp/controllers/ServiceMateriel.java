@@ -27,7 +27,6 @@ import java.util.Map;
  */
 public class ServiceMateriel {
     
-      private static final String ID_PARAM = "id";
       
       Materiel  mat ;
     
@@ -60,7 +59,6 @@ public class ServiceMateriel {
     //methode d'ajout
     public boolean addMateriel(Materiel m , int id){
         
-        boolean result =false;
             String nom =m.getNom();
             String description = m.getDescription();
             String photo= m.getPhoto();
@@ -233,10 +231,12 @@ public class ServiceMateriel {
     
      public boolean deleteMateriel(int id){
         
-        String url = MaterielsStatics.DELETE_MATERIEL+id;
+        String url = MaterielsStatics.DELETE_MATERIEL;
         
         con.setUrl(url);
         con.setPost(false);
+        
+        con.addArgument("id", id+"");
         
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
