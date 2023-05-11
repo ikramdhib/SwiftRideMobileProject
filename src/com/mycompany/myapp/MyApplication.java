@@ -16,7 +16,9 @@ import com.codename1.io.NetworkEvent;
 import com.mycompany.myapp.gui.AddGarage;
 import com.mycompany.myapp.gui.AddMaintenance;
 import com.mycompany.myapp.gui.AddMateriel;
+import com.mycompany.myapp.gui.DetailMaintenance;
 import com.mycompany.myapp.gui.DetailMateriel;
+import com.mycompany.myapp.gui.Home;
 import com.mycompany.myapp.gui.ListGarages;
 import com.mycompany.myapp.gui.ListMaintenance;
 import com.mycompany.myapp.gui.ListMateriels;
@@ -58,7 +60,7 @@ public class MyApplication {
             current.show();
             return;
         }
-        new AddMaintenance(1).show();
+        new Home().show();
     }
 
     public void stop() {
