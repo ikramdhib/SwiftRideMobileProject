@@ -7,10 +7,20 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.list.DefaultListModel;
 import com.codename1.ui.list.MultiList;
-import com.codename1.ui.util.Resources;
 import edu.swiftride.entities.Avis;
 import edu.swiftride.services.AvisService;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import com.codename1.l10n.ParseException;
+import com.codename1.ui.*;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.layouts.BorderLayout;
+import com.codename1.ui.list.DefaultListModel;
+import com.codename1.ui.list.MultiList;
+import edu.swiftride.entities.Avis;
+import edu.swiftride.services.AvisService;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +31,14 @@ public class ShowAvisForm extends Form {
 
     public ShowAvisForm() {
 
+        // Use BorderLayout to center the MultiList
+        setLayout(new BorderLayout());
         avisList = new MultiList(new DefaultListModel<>());
-        add(avisList);
+        
+        add(BorderLayout.CENTER, avisList);
+
         getAllAvis();
+
         // Create the toolbar and add the button
         Toolbar toolbar = new Toolbar();
         setToolbar(toolbar);

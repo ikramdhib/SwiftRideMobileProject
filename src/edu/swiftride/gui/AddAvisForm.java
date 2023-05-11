@@ -33,26 +33,39 @@ public class AddAvisForm extends Form {
         Button btnAjouter = new Button("Ajouter");
 
         btnAjouter.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                String commentaire = tfCommentaire.getText();
-                int etoile = Integer.parseInt(tfEtoile.getText());
+    @Override
+    public void actionPerformed(ActionEvent evt) {
+        String commentaire = tfCommentaire.getText();
+        int etoile = Integer.parseInt(tfEtoile.getText());
 
-                if (commentaire.length() == 0 || etoile == 0) {
-                    Dialog.show("Erreur", "Veuillez remplir tous les champs", "OK", null);
-                } else {
-                    // Créer un objet MoyenTransport avec les valeurs saisies
-                    Avis a = new Avis(commentaire, etoile);
+        // Vérifier que le commentaire ne contient pas de gros mots
+        if (commentaire.toLowerCase().contains("fat") || commentaire.toLowerCase().contains("stupid")) {
+            Dialog.show("Erreur", "Le commentaire ne doit pas contenir des gros mots", "OK", null);
+            return;
+        }
 
-                    // Appeler le service pour ajouter le moyen de transport
-                    boolean result = AvisService.getInstance().addAvis(a);
+        // Vérifier que l'étoile est entre 1 et 5
+        if (etoile < 1 || etoile > 5) {
+            Dialog.show("Erreur", "L'étoile doit être entre 1 et 5", "OK", null);
+            return;
+        }
 
-                    if (result) {
+        if (commentaire.length() == 0 || etoile == 0) {
+            Dialog.show("Erreur", "Veuillez remplir tous les champs", "OK", null);
+        } else {
+            // Créer un objet MoyenTransport avec les valeurs saisies
+            Avis a = new Avis(commentaire, etoile);
 
-                    }
-                }
+            // Appeler le service pour ajouter le moyen de transport
+            boolean result = AvisService.getInstance().addAvis(a);
+
+            if (result) {
+
             }
-        });
+        }
+    }
+});
+
 
         // Ajouter les composants à la forme
         addAll(tfCommentaire, tfEtoile, btnAjouter);
