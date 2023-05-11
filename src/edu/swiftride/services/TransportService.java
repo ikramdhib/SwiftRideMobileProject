@@ -20,6 +20,8 @@ import com.codename1.ui.events.ActionListener;
 import java.util.ArrayList;
 import edu.swiftride.utils.Statics;
 import com.codename1.ui.Dialog;
+import com.codename1.ui.Form;
+import edu.swiftride.gui.ListTransportsForm;
 import java.io.IOException;
 import java.util.Map;
 
@@ -119,6 +121,14 @@ import java.util.Map;
         resultOk = request.getResponseCode() == 200;
         if (resultOk) {
             Dialog.show("Succès", "Le moyen de transport est ajouté avec succès", "OK", null);
+            
+           
+                //Redirect
+                Form ListTransportsForm = new ListTransportsForm();
+                ListTransportsForm.show();
+            
+            
+            
         } else {
             Dialog.show("Erreur", "Une erreur est survenue", "OK", null);
         }

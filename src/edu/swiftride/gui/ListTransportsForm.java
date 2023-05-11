@@ -3,6 +3,7 @@ package edu.swiftride.gui;
 
 import com.codename1.l10n.ParseException;
 import com.codename1.ui.Form;
+import com.codename1.ui.Toolbar;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.list.DefaultListModel;
@@ -26,6 +27,18 @@ public class ListTransportsForm extends Form {
         moyenList = new MultiList(new DefaultListModel<>());
         add(moyenList);
         getAllMoyens();
+        
+        Toolbar toolbar = new Toolbar();
+        setToolbar(toolbar);
+        toolbar.addCommandToSideMenu("ajouter moyen transport", null, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                // Show the add avis form
+                AddTransportForm myForm = new AddTransportForm(ListTransportsForm.this);
+                myForm.show();
+            }
+        });
+
     }
 
     private void getAllMoyens() {
