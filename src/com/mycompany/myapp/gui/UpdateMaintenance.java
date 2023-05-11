@@ -14,7 +14,6 @@ import com.codename1.ui.Command;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
-import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
 import com.codename1.ui.RadioButton;
@@ -31,13 +30,15 @@ import com.mycompany.myapp.entities.Maintenance;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
 /**
  *
  * @author dhibi
  */
-public class AddMaintenance extends Form {
+public class UpdateMaintenance extends Form{
     
-    public AddMaintenance(int id){
+        
+    public UpdateMaintenance(int id){
 
         setTitle("PRENEZ UN RENDE-VOUS");
         
@@ -169,6 +170,5 @@ public class AddMaintenance extends Form {
         
   
     }
-    
     
 }

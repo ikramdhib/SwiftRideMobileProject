@@ -6,10 +6,12 @@
 package com.mycompany.myapp.gui;
 
 import com.codename1.ui.Button;
+import com.codename1.ui.Command;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextField;
+import com.codename1.ui.Toolbar;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BoxLayout;
@@ -25,6 +27,15 @@ public class AddMateriel extends Form{
     public AddMateriel(int id ){
         setTitle("Ajouter Materiel pour garage N°"+id);
         setLayout(BoxLayout.y());
+        
+         Toolbar toolbar = getToolbar();
+        Command exitCommand = new Command("Back") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                new Home().show();
+            }
+        };
+        toolbar.addCommandToLeftBar(exitCommand);
         
         Label lname = new Label("Intitule :");
         TextField fnom = new TextField("", "Intitule");

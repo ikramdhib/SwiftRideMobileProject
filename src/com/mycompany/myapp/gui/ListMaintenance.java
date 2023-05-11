@@ -7,12 +7,14 @@ package com.mycompany.myapp.gui;
 
 import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Button;
+import com.codename1.ui.Command;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
+import com.codename1.ui.Toolbar;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BoxLayout;
@@ -32,6 +34,14 @@ public class ListMaintenance extends Form{
         
       setTitle("LES MAINTENANCES");
       setLayout(BoxLayout.y());
+       Toolbar toolbar = getToolbar();
+        Command exitCommand = new Command("Back") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                new Home().show();
+            }
+        };
+        toolbar.addCommandToLeftBar(exitCommand);
       ArrayList<Maintenance> maintenances = ServiceMaintenace.getInstance().getAllMateriels();
       
       
@@ -45,7 +55,6 @@ public class ListMaintenance extends Form{
 
     private void addElement(Maintenance m) {
         
-        System.out.println(m.getDate_maintenance());
         
         Date date = m.getDate_maintenance();
         Date datef =m.getFin_maintenance();
@@ -62,6 +71,7 @@ public class ListMaintenance extends Form{
         
         Button btndelete =new Button(FontImage.MATERIAL_DELETE);
         Button btndetail = new Button(FontImage.MATERIAL_INFO);
+          Button btnUpdate = new Button(FontImage.MATERIAL_UPDATE);
         
         
         btndelete.addActionListener(new ActionListener() {
@@ -75,11 +85,29 @@ public class ListMaintenance extends Form{
                         } 
                 }
         });
-         
+        
+        
+        btndetail.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                
+                System.out.println(m.getId());
+              new  DetailMaintenance(m.getId()).show();
+            }
+        });
+        
+        
+        btnUpdate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                
+                new UpdateMaintenance(m.getId()).show();
+            }
+        });
          
          Container buttonsContainer = new Container(new FlowLayout(Component.CENTER, Component.CENTER));
          
-         buttonsContainer.addAll(btndelete , btndetail);
+         buttonsContainer.addAll(btndelete , btndetail , btnUpdate);
     
         addAll(lai1,lnom,lai2,lnomf,ltype,buttonsContainer);
     }

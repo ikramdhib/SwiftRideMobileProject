@@ -6,12 +6,14 @@
 package com.mycompany.myapp.gui;
 
 import com.codename1.ui.Button;
+import com.codename1.ui.Command;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
+import com.codename1.ui.Toolbar;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BoxLayout;
@@ -33,7 +35,14 @@ public class ListMateriels extends Form{
       setLayout(BoxLayout.y());
       ArrayList<Materiel> maateriels = ServiceMateriel.getInstance().getAllMateriels();
       
-      
+       Toolbar toolbar = getToolbar();
+        Command exitCommand = new Command("Back") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                new Home().show();
+            }
+        };
+        toolbar.addCommandToLeftBar(exitCommand);
       for(Materiel g : maateriels){
           
           addElement(g);
@@ -64,6 +73,14 @@ public class ListMateriels extends Form{
         
             
         });
+         
+         btndetail.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    new DetailMateriel(m.getId()).show();
+                }
+            });
+         
          
          Container buttonsContainer = new Container(new FlowLayout(Component.CENTER, Component.CENTER));
          

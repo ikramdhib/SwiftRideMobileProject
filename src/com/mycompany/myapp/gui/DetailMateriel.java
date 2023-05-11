@@ -5,8 +5,11 @@
  */
 package com.mycompany.myapp.gui;
 
+import com.codename1.ui.Command;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
+import com.codename1.ui.Toolbar;
+import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.layouts.BoxLayout;
 import com.mycompany.myapp.controllers.ServiceMateriel;
 import com.mycompany.myapp.entities.Garage;
@@ -23,6 +26,15 @@ public class DetailMateriel extends Form{
       setTitle("LES MATERIELS");
       setLayout(BoxLayout.y());
       
+       Toolbar toolbar = getToolbar();
+        Command exitCommand = new Command("Back") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                new Home().show();
+            }
+        };
+        toolbar.addCommandToLeftBar(exitCommand);
+      
         Materiel m = ServiceMateriel.getInstance().getMateriel(id);
         
         Garage g = ServiceMateriel.getInstance().getGaragedeMateriel(id);
@@ -34,20 +46,21 @@ public class DetailMateriel extends Form{
 
     private void addElement(Materiel m, Garage g) {
         
-        
-         Label tfname = new Label(g.getMatricule_garage());
+        Label l1 = new Label("Le marteiel :"+m.getNom()+ "de reférence :  ");
+         Label l2 = new Label("Disponible dans notre garage :  ");
+         Label l3 = new Label(" situer à :  ");
+         
+        Label tfname = new Label(g.getMatricule_garage());
         Label tfprenom = new Label(g.getLocalisation());
-        Label tfemail = new Label(""+g.getSurface());
         
-        Label toto = new Label(tfname.getText()+" / "+tfprenom.getText()+" : "+ tfemail.getText());
+       
     
             Label lnom  = new Label(m.getNom());
             Label lref = new Label(m.getPhoto());
          
-            Label totos = new Label(lnom.getText()+" / "+lref.getText());
          
     
-        addAll(toto , totos);
+        addAll(l1,lref,l2,tfname ,l3,tfprenom );
     }
        
     
