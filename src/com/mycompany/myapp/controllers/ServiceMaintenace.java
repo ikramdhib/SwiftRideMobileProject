@@ -14,9 +14,13 @@ import com.codename1.l10n.DateFormat;
 import com.codename1.l10n.ParseException;
 import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.events.ActionListener;
+import com.mycompany.myapp.entities.Garage;
 import com.mycompany.myapp.entities.Maintenance;
+import com.mycompany.myapp.entities.Voiture;
 import com.mycompany.myapp.utils.MaintenanceStatics;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -147,8 +151,7 @@ public class ServiceMaintenace {
             
             Maintenance m = new Maintenance();
             float id = Float.parseFloat(obj.get("id").toString());
-             
-            m.setId((int) id);
+               m.setId((int) id);
                m.setDate_maintenance(finalDate);
                m.setFin_maintenance(finalDatef);
                m.setType(obj.get("type").toString());
@@ -214,5 +217,202 @@ public class ServiceMaintenace {
          return resultOK;
     }
     
+    
+      public Garage getGaragedeMateriel( int id){
+        
+       Garage g = new Garage();
+        
+        JSONParser parser = new JSONParser();
+        
+        String url = MaintenanceStatics.GET_ONE;
+        con.addArgument("id", id+"");
+        con.setUrl(url);
+        con.setPost(false);
+          System.out.println(url);
+         System.out.println(con.getResponseCode()+"eere");
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+        
+          try {
+               String json = new String(con.getResponseData());
+               System.out.println(json);
+              Map<String , Object> response = parser.
+              parseJSON(new InputStreamReader(new ByteArrayInputStream(json.getBytes())));
+              
+              Map<String,Object> sous_res =(Map<String,Object>) response.get("idGarage");
+              
+              System.out.println(sous_res+"******");
+               float surface = Float.parseFloat(sous_res.get("surface").toString());
+              
+             g.setLocalisation(sous_res.get("localisation").toString());
+             g.setMatricule_garage(sous_res.get("matriculeGarage").toString());
+             g.setSurface((int) surface);
+              
+          } catch (IOException ex) {
+              System.out.println(ex.getMessage());
+          }
+        
+              con.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        return g;
+    }
+      
+      
+      
+        public Maintenance getMaintenance(int id ){
+        
+         Maintenance mati = new Maintenance();
+        
+        JSONParser parser = new JSONParser();
+        
+        String url = MaintenanceStatics.GET_ONE;
+        con.addArgument("id",id+"");
+        con.setUrl(url);
+        
+        con.setPost(false);
+        
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                
+              
+          try {
+              try {
+              String json = new String(con.getResponseData());
+              Map<String , Object> response = parser.
+                    
+              parseJSON(new InputStreamReader(new ByteArrayInputStream(json.getBytes())));
+              
+              SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+           
+           String dateString = (String) response.get("dateMaintenance");
+           String dateStringFin = (String) response.get("finMaintenance");
+                
+           Date dateWithoutTimezone;
+              
+                  dateWithoutTimezone = dateFormat.parse(dateString);
+             
+           
+           Date dateWithoutTimezonef = dateFormat.parse(dateStringFin);
+           
+           // Parse l'offset de fuseau horaire à partir de la chaîne de caractères
+            String timezoneOffsetString = dateString.substring(dateString.length() - 6);
+            int hoursOffset = Integer.parseInt(timezoneOffsetString.substring(0, 3));
+            int minutesOffset = Integer.parseInt(timezoneOffsetString.substring(4));
+            int totalOffsetMinutes = (hoursOffset * 60) + minutesOffset;
+            
+            
+             String timezoneOffsetStringf = dateStringFin.substring(dateStringFin.length() - 6);
+            int hoursOffsetf = Integer.parseInt(timezoneOffsetStringf.substring(0, 3));
+            int minutesOffsetf = Integer.parseInt(timezoneOffsetStringf.substring(4));
+            int totalOffsetMinutesf = (hoursOffsetf * 60) + minutesOffsetf;
+            
+            
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateWithoutTimezone);
+            calendar.add(Calendar.MINUTE, -totalOffsetMinutes);
+
+            Calendar calendarf = Calendar.getInstance();
+            calendarf.setTime(dateWithoutTimezonef);
+            calendarf.add(Calendar.MINUTE, -totalOffsetMinutesf);            
+            
+            Date finalDate = calendar.getTime();
+            Date finalDatef = calendarf.getTime();
+                
+            
+            float id = Float.parseFloat(response.get("id").toString());
+            
+             Map<String,Object> sous_res =(Map<String,Object>) response.get("idGarage");
+              Map<String,Object> sous_ress =(Map<String,Object>) response.get("idVoiture");
+               float idg = Float.parseFloat(sous_res.get("id").toString());
+               float idv = Float.parseFloat(sous_ress.get("id").toString());
+             
+                mati.setId((int) id);
+                mati.setId_garage((int) idg);
+                mati.setId_voiture((int) idv);
+               mati.setDate_maintenance(finalDate);
+               mati.setFin_maintenance(finalDatef);
+               mati.setType(response.get("type").toString());
+        
+                  System.out.println(mati+"****************************************************");  
+              
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }   
+              
+              
+          } catch (IOException ex) {
+              System.out.println(ex.getMessage());
+          }
+        
+              con.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        
+        return mati;
+    }
+        
+        
+          public Voiture getVoitureMaint( int id){
+        
+              Voiture v = new Voiture();
+        
+        JSONParser parser = new JSONParser();
+        
+        String url = MaintenanceStatics.GET_ONE;
+        
+        con.addArgument("id",id+"");
+        
+        con.setUrl(url);
+        
+        con.setPost(false);
+        
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+        
+          try {
+              
+              String json = new String(con.getResponseData());
+              
+              System.out.println(json+"66666666666666666666666666666");
+              
+              Map<String , Object> response = parser.
+                    
+              parseJSON(new InputStreamReader(new ByteArrayInputStream(json.getBytes())));
+              
+              Map<String,Object> sous_res =(Map<String,Object>) response.get("idVoiture");
+             
+            v.setMarque((String)sous_res.get("marque"));
+            v.setMatricule((String)sous_res.get("matricule"));
+              
+          } catch (IOException ex) {
+              System.out.println(ex.getMessage());
+          }
+        
+              con.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        return v;
+    }
+          
+          
+    public boolean updateMaintenance(Maintenance m){
+        
+        String url = MaintenanceStatics.GET_ONE;
+        
+        con.setUrl(url);
+        
+        con.setPost(false);
+        
+        con.addArgument(url, url);
+        
+    return resultOK ;
+    }
     
 }
