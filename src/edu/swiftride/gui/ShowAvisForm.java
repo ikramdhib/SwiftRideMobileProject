@@ -50,6 +50,15 @@ public class ShowAvisForm extends Form {
                 myForm.show();
             }
         });
+        
+        toolbar.addCommandToSideMenu("Statistique", null, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                // Show the add avis form
+                StatistiquePieForm statForm = new StatistiquePieForm();
+                statForm.show();
+            }
+        });
     }
 
     private void getAllAvis() {

@@ -29,5 +29,14 @@ public class Home extends Form {
             f.show();
         });
     addAll(b1,b2);
+    
+      Button b3 = new Button("View Stats");
+        b3.addActionListener(e -> {
+            StatistiquePieForm statistiquePieForm = new StatistiquePieForm();
+            statistiquePieForm.createPieChartForm(); // call the createPieChartForm method here
+            statistiquePieForm.show();
+        });
+        add(b3);
+
     }
     }

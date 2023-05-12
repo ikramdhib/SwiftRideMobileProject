@@ -10,7 +10,7 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import edu.swiftride.entities.Avis;
 import edu.swiftride.services.AvisService;
-import java.io.IOException;
+
 
 /**
  *
@@ -32,36 +32,33 @@ public class AddAvisForm extends Form {
         // Bouton pour ajouter le transport
         Button btnAjouter = new Button("Ajouter");
 
-        btnAjouter.addActionListener(new ActionListener() {
+    btnAjouter.addActionListener(new ActionListener() {
     @Override
     public void actionPerformed(ActionEvent evt) {
         String commentaire = tfCommentaire.getText();
         int etoile = Integer.parseInt(tfEtoile.getText());
 
-        // Vérifier que le commentaire ne contient pas de gros mots
-        if (commentaire.toLowerCase().contains("fat") || commentaire.toLowerCase().contains("stupid")) {
-            Dialog.show("Erreur", "Le commentaire ne doit pas contenir des gros mots", "OK", null);
+        // Vérifier si le commentaire contient des gros mots
+        if (commentaire.contains("fat") || commentaire.contains("stupid")) {
+            Dialog.show("Erreur", "Le commentaire contient des gros mots", "OK", null);
             return;
         }
 
-        // Vérifier que l'étoile est entre 1 et 5
+        // Vérifier si l'étoile est entre 1 et 5
         if (etoile < 1 || etoile > 5) {
             Dialog.show("Erreur", "L'étoile doit être entre 1 et 5", "OK", null);
             return;
         }
 
-        if (commentaire.length() == 0 || etoile == 0) {
-            Dialog.show("Erreur", "Veuillez remplir tous les champs", "OK", null);
-        } else {
-            // Créer un objet MoyenTransport avec les valeurs saisies
-            Avis a = new Avis(commentaire, etoile);
+        // Créer un objet Avis avec les valeurs saisies
+        Avis a = new Avis(commentaire, etoile);
 
-            // Appeler le service pour ajouter le moyen de transport
-            boolean result = AvisService.getInstance().addAvis(a);
+        // Appeler le service pour ajouter l'avis
+        boolean result = AvisService.getInstance().addAvis(a);
 
-            if (result) {
-
-            }
+        if (result) {
+            // Afficher un message de succès
+            Dialog.show("Succès", "L'avis a été ajouté avec succès", "OK", null);
         }
     }
 });

@@ -1,6 +1,5 @@
 package edu.swiftride.services;
 
-import com.codename1.db.Cursor;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.MultipartRequest;
 import com.codename1.io.NetworkEvent;
@@ -11,17 +10,10 @@ import java.util.ArrayList;
 import edu.swiftride.utils.Statics;
 import com.codename1.ui.Dialog;
 import java.io.IOException;
-import com.codename1.db.Database;
-import com.codename1.db.Cursor;
-import com.codename1.db.Row;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.JSONParser;
-import com.codename1.l10n.ParseException;
 import com.codename1.ui.Form;
 import edu.swiftride.gui.ShowAvisForm;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.util.List;
 import java.util.Map;
 
 public class AvisService {
