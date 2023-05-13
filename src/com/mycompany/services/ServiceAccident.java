@@ -13,6 +13,7 @@ import com.codename1.io.NetworkManager;
 
 import com.codename1.ui.events.ActionListener;
 import com.mycomapny.entities.Accident;
+import com.mycomapny.entities.Voiture;
 import com.mycompany.utils.Statics;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -34,7 +35,7 @@ public class ServiceAccident {
 
     //initilisation connection request 
     private ConnectionRequest req;
-    
+    ArrayList<Voiture> list ;
     
     public static ServiceAccident getInstance() {
         if(instance == null )
@@ -51,7 +52,7 @@ public class ServiceAccident {
     //ajout 
     public void ajoutAccident(Accident accident) {
         
-        String url =Statics.BASE_URL+"/createaccidentJSON?type="+accident.getType()+"&lieu="+accident.getLieu()+"&description="+accident.getDescription()+"&idVoiture="+accident.getIdVoiture(); // aa sorry n3adi getId lyheya mech ta3 user ta3 reclamation
+        String url =Statics.BASE_URL+"/createaccidentJSON?type="+accident.getType()+"&lieu="+accident.getLieu()+"&description="+accident.getDescription()+"&idVoiture="+accident.getIdVoiture()+"&date="+accident.getDate(); // aa sorry n3adi getId lyheya mech ta3 user ta3 reclamation
         
         req.setUrl(url);
         req.addResponseListener((e) -> {
@@ -64,6 +65,21 @@ public class ServiceAccident {
         
     }
       
+    //afficheids
+     public void idvoiture(Voiture v) {
+        
+        String url =Statics.BASE_URL+"/voitureidss";
+        
+        req.setUrl(url);
+        req.addResponseListener((e) -> {
+            
+            String str = new String(req.getResponseData());//Reponse json hethi lyrinaha fi navigateur 9bila
+            System.out.println("data == "+str);
+        });
+        
+        NetworkManager.getInstance().addToQueueAndWait(req);//execution ta3 request sinon yet3ada chy dima nal9awha
+        
+    }
     //affichage
     
     public ArrayList<Accident>affichageAccident() {
@@ -98,19 +114,13 @@ public class ServiceAccident {
                         ac.setType(type);
                         ac.setDescription(description);
                         ac.setLieu(lieu);
+                
+                      String dateStr = obj.get("date").toString();
+                       ac.setDate(dateStr);
+                    
                      
                         
-                        
-                        //Date 
-                        String dateString = "";
-                 String dateStr = obj.get("date").toString();
-                     if(dateStr.contains("timestamp") && dateStr.contains("}")){
-                     String DateConverter = dateStr.substring(dateStr.indexOf("timestamp") + 10 , dateStr.lastIndexOf("}"));
-                      Date currentTime = new Date(Double.valueOf(DateConverter).longValue() * 1000);
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    dateString = formatter.format(currentTime);
-                     }
-                     ac.setDate(dateString);
+                     
 
                         
                         //insert data into ArrayList result
@@ -133,12 +143,61 @@ public class ServiceAccident {
         
         
     }
-    
-    
+    //methode de parse 
+    public ArrayList<Voiture> parseVoiture(String json ) {
+        
+        list=new ArrayList<Voiture>();
+        
+        JSONParser j = new JSONParser();
+        
+        try {
+            
+            
+            Map<String,Object>tasklistJson=j.parseJSON(new CharArrayReader(json.toCharArray()));
+            
+            List<Map<String,Object>> listt = (List<Map<String,Object>>) tasklistJson.get("root");
+        for(Map<String,Object> obj :listt){
+            
+            Voiture v = new Voiture();
+         
+            float id = Float.parseFloat(obj.get("id").toString());
+                   
+          
+            v.setId((int) id);
+            
+        
+            list.add(v);
+        }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return list;
+    }
+    //method afficher all 
+    public ArrayList<Voiture> getAllid(){
+        
+            String url =Statics.BASE_URL+"/voitureidss";
+        
+        req.setUrl(url);
+        
+        req.setPost(false);
+        
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                
+                list = parseVoiture(new String(req.getResponseData()));
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return list;
+    }
     
     //Detail Reclamation bensba l detail n5alihoa lel5r ba3d delete+update
     
-    public Accident DetailAccident( int id , Accident accident) {
+    public Accident DetailAccident( int id , Accident a) {
         
         String url = Statics.BASE_URL+"/accidentJSON/"+id;
         req.setUrl(url);
@@ -151,10 +210,10 @@ public class ServiceAccident {
                 
                 Map<String,Object>obj = jsonp.parseJSON(new CharArrayReader(new String(str).toCharArray()));
                 
-                accident.setType(obj.get("type").toString());
-                accident.setLieu(obj.get("lieu").toString());
-                accident.setDescription(obj.get("description").toString());
-                accident.setIdVoiture(Integer.parseInt(obj.get("idVoiture").toString()));
+                a.setType(obj.get("type").toString());
+                a.setLieu(obj.get("lieu").toString());
+                a.setDescription(obj.get("description").toString());
+               
                 
             }catch(IOException ex) {
                 System.out.println("error related to sql :( "+ex.getMessage());
@@ -169,7 +228,7 @@ public class ServiceAccident {
         
               NetworkManager.getInstance().addToQueueAndWait(req);//execution ta3 request sinon yet3ada chy dima nal9awha
 
-              return accident;
+              return a;
         
         
     }
@@ -196,7 +255,7 @@ public class ServiceAccident {
 
 //Update 
     public boolean modifierAcccident(Accident accident,int id) {
-        String url = Statics.BASE_URL +"/updateJSON/"+id+"?type="+accident.getType()+"&description="+accident.getDescription()+"&lieu="+accident.getLieu();
+        String url = Statics.BASE_URL +"/updateJSON/"+id+"?type="+accident.getType()+"&description="+accident.getDescription()+"&lieu="+accident.getLieu()+"&date="+accident.getDate();
         req.setUrl(url);
         
         req.addResponseListener(new ActionListener<NetworkEvent>() {

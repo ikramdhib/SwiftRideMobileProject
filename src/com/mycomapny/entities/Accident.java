@@ -20,12 +20,14 @@ public class Accident {
     private String lieu ;
     private int idVoiture;
 
-    public Accident(String type, String date, String description, String lieu, int idVoiture) {
+    public Accident(String type, String lieu, String description, int idVoiture,String date) {
         this.type = type;
-        this.date = date;
-        this.description = description;
+        
         this.lieu = lieu;
-        this.idVoiture = idVoiture;
+          this.description = description;
+          this.idVoiture = idVoiture;
+        this.date = date;
+        
     }
 
     public Accident(String type, String description, String lieu, int idVoiture) {

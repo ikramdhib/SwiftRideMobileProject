@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <resource majorVersion="1" minorVersion="11" useXmlUI="false">
+    <image name="acc.png"  />
+    <image name="ACCIE.png"  />
     <image name="arrow.png"  />
     <image name="BMW-4-Series-Gran-Coupe-G26_thumb.jpg"  />
+    <image name="home.png"  />
+    <image name="logo1.png"  />
     <theme name="Theme">
         <val key="@includeNativeBool" value="true" />
     </theme>

@@ -43,11 +43,11 @@ import java.util.ArrayList;
  *
  * @author user
  */
-public class ListeAccidentForm extends BaseForm{
+public class ListeAccidentForm extends Form{
     
     Form current;
     public ListeAccidentForm(Resources res ) {
-          super("Newsfeed",BoxLayout.y()); //herigate men Newsfeed w l formulaire vertical
+         
         Toolbar tb = new Toolbar(true);
         current = this ;
         setToolbar(tb);
@@ -65,7 +65,7 @@ public class ListeAccidentForm extends BaseForm{
         Label s1 = new Label();
         Label s2 = new Label();
         
-        addTab(swipe,s1, res.getImage("VOITURE.jpg"),"","",res);
+        addTab(swipe,s1, res.getImage("logo1.png"),"","",res);
         
         // Welcome current user
       
@@ -116,9 +116,9 @@ public class ListeAccidentForm extends BaseForm{
         mesListes.setUIID("SelectBar");
         RadioButton liste = RadioButton.createToggle("Ajout accident", barGroup);
         liste.setUIID("SelectBar");
-        RadioButton partage = RadioButton.createToggle("HOME", barGroup);
-        partage.setUIID("SelectBar");
-        Label arrow = new Label(res.getImage("arrow.png"), "Container");
+        RadioButton home = RadioButton.createToggle("home", barGroup);
+        home.setUIID("SelectBar");
+
 
  mesListes.addActionListener((e) -> {
                InfiniteProgress ip = new InfiniteProgress();
@@ -139,25 +139,18 @@ public class ListeAccidentForm extends BaseForm{
         ajoutaccident.show();
             refreshTheme();
 });
-
+home.addActionListener((e) -> {
+               
+       
+       Home homein = new Home(res);
+        homein.show();
+            refreshTheme();
+        });
         add(LayeredLayout.encloseIn(
-                GridLayout.encloseIn(3, mesListes, liste, partage),
-                FlowLayout.encloseBottom(arrow)
+                GridLayout.encloseIn(mesListes,liste,home)
         ));
 
-        partage.setSelected(true);
-        arrow.setVisible(false);
-        addShowListener(e -> {
-            arrow.setVisible(true);
-            updateArrowPosition(partage, arrow);
-        });
-        bindButtonSelection(mesListes, arrow);
-        bindButtonSelection(liste, arrow);
-        bindButtonSelection(partage, arrow);
-        // special case for rotation
-        addOrientationListener(e -> {
-            updateArrowPosition(barGroup.getRadioButton(barGroup.getSelectedIndex()), arrow);
-        });
+       
         
          //Appel affichage methode
         ArrayList<Accident>list = ServiceAccident.getInstance().affichageAccident();
@@ -165,17 +158,10 @@ public class ListeAccidentForm extends BaseForm{
         for(Accident rec : list ) {
              String urlImage ="VOITURE.jpg";//image statique pour le moment ba3d taw fi  videos jayin nwarikom image 
             
-             Image placeHolder = Image.createImage(120, 90);
-             EncodedImage enc =  EncodedImage.createFromImage(placeHolder,false);
-             URLImage urlim = URLImage.createToStorage(enc, urlImage, urlImage, URLImage.RESIZE_SCALE);
              
-                addButton(urlim,rec,res);
+                addButton(rec,res);
         
-                ScaleImageLabel image = new ScaleImageLabel(urlim);
-                
-                Container containerImg = new Container();
-                
-                image.setBackgroundType(Style.BACKGROUND_IMAGE_SCALED_FILL);
+               
         }
         
         
@@ -214,7 +200,7 @@ public class ListeAccidentForm extends BaseForm{
                     )
                 );
         
-        swipe.addTab("",res.getImage("VOITURE.jpg"), page1);
+        swipe.addTab("",res.getImage("logo1.png"), page1);
         
         
         
@@ -237,20 +223,16 @@ public class ListeAccidentForm extends BaseForm{
         l.getParent().repaint();
     }
 
-    private void addButton(Image img, Accident rec,Resources res) {
-        int height = Display.getInstance().convertToPixels(11.5f);
-        int width = Display.getInstance().convertToPixels(14f);
-        
-        Button image = new Button(img.fill(width, height));
-        image.setUIID("Label");
-        Container cnt = BorderLayout.west(image);
+    private void addButton( Accident rec,Resources res) {
+
+Container cnt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
        //kif nzidouh  ly3endo date mathbih fi codenamone y3adih string w y5alih f symfony dateTime w ytab3ni cha3mlt taw yjih
-        Label dateTxt = new Label("Date : "+rec.getDate(),"NewsTopLine2");
+        Label descriptionTxt = new Label("Description : "+rec.getDescription() ,"NewsTopLine2");
        Label lieuTxt = new Label("Lieu : "+rec.getLieu(),"NewsTopLine2");
-        Label idvoitureTxt = new Label("Voiture : "+rec.getIdVoiture(),"NewsTopLine2" );
+        Label type = new Label("type : "+rec.getType(),"NewsTopLine2" );
+        Label datetxt = new Label("date : "+rec.getDate(),"NewsTopLine2" );
         
-        
-       createLineSeparator();  
+     
        
         //supprimer button
         Label lSupprimer = new Label(" ");
@@ -296,11 +278,31 @@ public class ListeAccidentForm extends BaseForm{
             new UpdateAccidentForm(res,rec).show();
         });
         
-          cnt.add(BorderLayout.CENTER,BoxLayout.encloseY(
+        
+         //Update icon 
+        Label details = new Label(" ");
+        details.setUIID("NewsTopLine");
+        Style detailsstyle = new Style(details.getUnselectedStyle());
+        detailsstyle.setFgColor(0xf7ad02);
+        
+        FontImage dfontimage = FontImage.createMaterial(FontImage.MATERIAL_MODE_NIGHT, detailsstyle);
+        details.setIcon(dfontimage);
+        details.setTextPosition(LEFT);
+        
+       
+        details.addPointerPressedListener(l -> {
+            //System.out.println("hello update");
+            new DetailsAccident(res,rec).show();
+        });
+        
+        
+          cnt.add(BoxLayout.encloseY(
                 
-                BoxLayout.encloseX(dateTxt),
+                BoxLayout.encloseX(descriptionTxt),
                 BoxLayout.encloseX(lieuTxt),
-                BoxLayout.encloseX(idvoitureTxt,lModifier,lSupprimer)));
+                BoxLayout.encloseX(datetxt),
+                 BoxLayout.encloseX(type),
+                BoxLayout.encloseX(lModifier,details,lSupprimer)));
          //
         add(cnt);
         

@@ -9,6 +9,7 @@ import com.codename1.components.ScaleImageLabel;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.Button;
 import com.codename1.ui.ButtonGroup;
+import com.codename1.ui.ComboBox;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
@@ -28,20 +29,23 @@ import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
 import com.mycomapny.entities.Accident;
+import com.mycomapny.entities.Voiture;
 import com.mycompany.services.ServiceAccident;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author user
  */
-public class AjoutAccidentForm extends BaseForm{
-      
+public class AjoutAccidentForm extends Form{
+    private List<Voiture> availableCars;
     Form current;
     public AjoutAccidentForm(Resources res ) {
         super("Ajout Accident",BoxLayout.y()); //herigate men Newsfeed w l formulaire vertical
@@ -62,9 +66,8 @@ public class AjoutAccidentForm extends BaseForm{
         
         Label s1 = new Label();
         Label s2 = new Label();
-        
-        addTab(swipe,s1, res.getImage("VOITURE.jpg"),"","",res);
-        
+        //
+        addTab(swipe,s1, res.getImage("acc.png"),"","",res);
         //
         
          swipe.setUIID("Container");
@@ -110,20 +113,16 @@ public class AjoutAccidentForm extends BaseForm{
         mesListes.setUIID("SelectBar");
         RadioButton liste = RadioButton.createToggle("Ajouter accident", barGroup);
         liste.setUIID("SelectBar");
-        RadioButton partage = RadioButton.createToggle("HOME", barGroup);
-        partage.setUIID("SelectBar");
-        Label arrow = new Label(res.getImage("arrow.png"), "Container");
+      
+        RadioButton home = RadioButton.createToggle("home", barGroup);
+        home.setUIID("SelectBar");
 
 
         
         mesListes.addActionListener((e) -> {
-               InfiniteProgress ip = new InfiniteProgress();
-        final Dialog ipDlg = ip.showInifiniteBlocking();
+               
         
-        //  ListReclamationForm a = new ListReclamationForm(res);
-          //  a.show();
-          
-          // Display the ListReclamationForm
+       
         ListeAccidentForm listaccidentForm = new ListeAccidentForm(res);
         listaccidentForm.show();
             refreshTheme();
@@ -135,33 +134,25 @@ public class AjoutAccidentForm extends BaseForm{
         ajoutaccident.show();
             refreshTheme();
 });
+       home.addActionListener((e) -> {
+               
        
+       Home homein = new Home(res);
+        homein.show();
+            refreshTheme();
+        });
         add(LayeredLayout.encloseIn(
-                GridLayout.encloseIn(3, mesListes, liste, partage),
-                FlowLayout.encloseBottom(arrow)
+                GridLayout.encloseIn( mesListes, liste,home)
+                
         ));
 
-        partage.setSelected(true);
-        arrow.setVisible(false);
-        addShowListener(e -> {
-            arrow.setVisible(true);
-            updateArrowPosition(partage, arrow);
-        });
-        bindButtonSelection(mesListes, arrow);
-        bindButtonSelection(liste, arrow);
-        bindButtonSelection(partage, arrow);
-        // special case for rotation
-        addOrientationListener(e -> {
-            updateArrowPosition(barGroup.getRadioButton(barGroup.getSelectedIndex()), arrow);
-        });
+       
         
         
         
         
-        TextField type = new TextField("", "entrer type!!");
-        type.setUIID("TextFieldBlack");
-        addStringValue("type",type);
-        
+         ComboBox<String> myCombo = new ComboBox<>("Collisions frontales","Collisions arrière","Accidents latéraux","Réactions en chaîne","Roulements");
+         add(myCombo);
         
         TextField lieu = new TextField("", "entrer lieu!!");
         lieu.setUIID("TextFieldBlack");
@@ -171,11 +162,27 @@ public class AjoutAccidentForm extends BaseForm{
         description.setUIID("TextFieldBlack");
         addStringValue("Description",description);
         
-         TextField voiture = new TextField("", "entrer voiture!!");
-        voiture.setUIID("TextFieldBlack");
-        addStringValue("voiture",voiture);
         
         
+      ArrayList<Voiture> voiture = ServiceAccident.getInstance().getAllid();
+         
+        String[] names = new String[voiture.size()];
+        
+        for (int i = 0; i < voiture.size(); i++) {
+            names[i] =voiture.get(i).getId()+"";
+        }
+         
+         ComboBox<String> myComboBox = new ComboBox<>(names);
+        
+        add( myComboBox);
+      
+         Picker dateTimePicker = new Picker();
+        dateTimePicker.setType(Display.PICKER_TYPE_DATE_AND_TIME);
+         
+        
+        dateTimePicker.setUIID("TextFieldBlack");
+        addStringValue("dateTimePicker",dateTimePicker);
+         
         Button btnAjouter = new Button("Ajouter");
         addStringValue("", btnAjouter);
         
@@ -188,8 +195,7 @@ public class AjoutAccidentForm extends BaseForm{
             
             
             try {
-                
-                if(type.getText().equals("") || description.getText().equals("")) {
+                if(lieu.getText().equals("") || description.getText().equals("")) {
                     Dialog.show("Veuillez vérifier les données","","Annuler", "OK");
                 }
                 
@@ -199,14 +205,18 @@ public class AjoutAccidentForm extends BaseForm{
                     final Dialog iDialog = ip.showInfiniteBlocking();
                     
                      // Create a LocalDateTime object for the current date and time
-                    
-           String voitureText = voiture.getText();
-
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+           String selectedChoice = (String) myComboBox.getSelectedItem();
+             String id = selectedChoice;
+         String selectedtype = (String) myCombo.getSelectedItem();
+             
           // Convert the String to an int
-          int voitureValue = Integer.parseInt(voitureText);
+          int voitureValue = Integer.parseInt(id);
         // Create a new Accident object using the data entered by the user and the current date and time
-                     Accident a = new Accident(type.getText(), lieu.getText(), description.getText(), voitureValue);
-
+                    
+                     Accident a = new Accident(selectedtype,
+                                  String.valueOf(lieu.getText()).toString(),String.valueOf(description.getText()).toString(),voitureValue,
+                                  format.format(dateTimePicker.getDate()));
                      System.out.println("data  accident == "+a);
 
         // Add the new Accident object to the database using the service class
@@ -238,15 +248,16 @@ public class AjoutAccidentForm extends BaseForm{
         listeAccident.addActionListener((e) -> {
           new ListeAccidentForm(res).show();
           });
-        
        
-        
     }
+    
+    
+    
      private void addStringValue(String s, Component v) {
         
         add(BorderLayout.west(new Label(s,"PaddedLabel"))
         .add(BorderLayout.CENTER,v));
-        add(createLineSeparator(0xeeeeee));
+        
     }
 
     private void addTab(Tabs swipe, Label spacer, Image image, String text, String string0, Resources res) {
@@ -279,11 +290,7 @@ public class AjoutAccidentForm extends BaseForm{
                     )
                 );
         
-        swipe.addTab("",res.getImage("VOITURE.jpg"), page1);
-        
-        
-        
-        
+        swipe.addTab("",res.getImage("acc.png"), page1);
     } 
     
     
