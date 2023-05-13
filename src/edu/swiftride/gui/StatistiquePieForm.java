@@ -6,10 +6,12 @@ import com.codename1.charts.renderers.DefaultRenderer;
 import com.codename1.charts.renderers.SimpleSeriesRenderer;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.charts.views.PieChart;
+import com.codename1.ui.Button;
 import com.codename1.ui.Container;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
+import com.codename1.ui.Toolbar;
 import com.codename1.ui.layouts.BorderLayout;
 import edu.swiftride.entities.Avis;
 import edu.swiftride.services.AvisService;
@@ -96,7 +98,16 @@ public void createPieChartForm() {
 
     // Add the container to the form
     add(container);
+    Toolbar toolbar = new Toolbar();
+setToolbar(toolbar);
+
+// Add a command to the toolbar that takes you to the home page
+toolbar.addCommandToSideMenu("Home", FontImage.createMaterial(FontImage.MATERIAL_HOME, toolbar.getUnselectedStyle()), e -> {
+    new Home().show();
+});
+toolbar.addCommandToSideMenu("Show Avis", FontImage.createMaterial(FontImage.MATERIAL_HOME, toolbar.getUnselectedStyle()), e -> {
+                ShowAvisForm f = new ShowAvisForm();
+            f.show();
+});
 }
-
-
 }

@@ -34,14 +34,18 @@ public class ShowAvisForm extends Form {
         // Use BorderLayout to center the MultiList
         setLayout(new BorderLayout());
         avisList = new MultiList(new DefaultListModel<>());
-        
+
         add(BorderLayout.CENTER, avisList);
 
         getAllAvis();
 
-        // Create the toolbar and add the button
+        // Create  toolbar
         Toolbar toolbar = new Toolbar();
         setToolbar(toolbar);
+        toolbar.addCommandToSideMenu("Home", FontImage.createMaterial(FontImage.MATERIAL_HOME, toolbar.getUnselectedStyle()), e -> {
+            new Home().show();
+        });
+        
         toolbar.addCommandToSideMenu("ajouter un avis", null, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -50,12 +54,13 @@ public class ShowAvisForm extends Form {
                 myForm.show();
             }
         });
-        
+
         toolbar.addCommandToSideMenu("Statistique", null, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 // Show the add avis form
                 StatistiquePieForm statForm = new StatistiquePieForm();
+                statForm.createPieChartForm();
                 statForm.show();
             }
         });

@@ -20,23 +20,28 @@ public class Home extends Form {
         Button b2 = new Button("afficher");
        
         b1.addActionListener(e -> {
-        AddAvisForm AddAvisForm = new AddAvisForm(this);
-        AddAvisForm.show();
-
-    });
-         b2.addActionListener(e -> {
+            AddAvisForm AddAvisForm = new AddAvisForm(this);
+            AddAvisForm.show();
+        });
+        
+        b2.addActionListener(e -> {
             ShowAvisForm f = new ShowAvisForm();
             f.show();
         });
-    addAll(b1,b2);
-    
-      Button b3 = new Button("View Stats");
+        
+        Button b3 = new Button("View Stats");
         b3.addActionListener(e -> {
             StatistiquePieForm statistiquePieForm = new StatistiquePieForm();
             statistiquePieForm.createPieChartForm(); // call the createPieChartForm method here
             statistiquePieForm.show();
         });
-        add(b3);
-
+        
+        Button b4 = new Button("View Map");
+        b4.addActionListener(e -> {
+            MapForm mapForm = new MapForm();
+            mapForm.f.show();
+        });
+        
+        addAll(b1, b2, b3, b4);
     }
-    }
+}
