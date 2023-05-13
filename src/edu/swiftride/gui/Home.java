@@ -13,11 +13,11 @@ import edu.swiftride.gui.AddAvisForm;
 public class Home extends Form {
     public Home(){
        
-        setTitle("Inscription");
+        setTitle("Home");
         setLayout(BoxLayout.y());
-        add(new Label("choose an option "));
-        Button b1 = new Button("ajouter ");
-        Button b2 = new Button("afficher");
+        add(new Label("choisit une option"));
+        Button b1 = new Button("Ajouter Avis");
+        Button b2 = new Button("Afficher avis");
        
         b1.addActionListener(e -> {
             AddAvisForm AddAvisForm = new AddAvisForm(this);
@@ -34,14 +34,7 @@ public class Home extends Form {
             StatistiquePieForm statistiquePieForm = new StatistiquePieForm();
             statistiquePieForm.createPieChartForm(); // call the createPieChartForm method here
             statistiquePieForm.show();
-        });
-        
-        Button b4 = new Button("View Map");
-        b4.addActionListener(e -> {
-            MapForm mapForm = new MapForm();
-            mapForm.f.show();
-        });
-        
-        addAll(b1, b2, b3, b4);
+        });    
+        addAll(b1, b2, b3);
     }
 }

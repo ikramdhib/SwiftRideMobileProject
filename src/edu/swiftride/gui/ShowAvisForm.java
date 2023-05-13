@@ -30,7 +30,6 @@ public class ShowAvisForm extends Form {
     Avis selectedAvis = null;
 
     public ShowAvisForm() {
-
         // Use BorderLayout to center the MultiList
         setLayout(new BorderLayout());
         avisList = new MultiList(new DefaultListModel<>());
@@ -66,40 +65,62 @@ public class ShowAvisForm extends Form {
         });
     }
 
-    private void getAllAvis() {
-        AvisService service = AvisService.getInstance();
-        ArrayList<Avis> aviss = service.getAllAvis();
-        DefaultListModel<Map<String, Object>> model = (DefaultListModel<Map<String, Object>>) avisList.getModel();
-        model.removeAll();
-        for (Avis a : aviss) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("Line1", a.getId());
-            item.put("Line2", "commentaire : " + a.getCommentaire());
-            item.put("Line3", "etoile : " + a.getEtoile());
+ private void getAllAvis() {
+    AvisService service = AvisService.getInstance();
+    ArrayList<Avis> aviss = service.getAllAvis();
+    DefaultListModel<Map<String, Object>> model = (DefaultListModel<Map<String, Object>>) avisList.getModel();
+    model.removeAll();
 
-            model.addItem(item);
-        }
-        avisList.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    Map<String, Object> selectedItem = (Map<String, Object>) avisList.getSelectedItem();
-                    int avisId = (int) selectedItem.get("Line1");
-                    Avis selectedAvis = null;
-                    for (Avis a : aviss) {
-                        if (a.getId() == avisId) {
-                            selectedAvis = a;
-                            break;
-                        }
-                    }
-                    EditAvisForm myForm2 = new EditAvisForm(selectedAvis);
-                    myForm2.show();
-                } catch (ParseException ex) {
-                    System.out.println(ex);
-                }
-            }
-        });
-
+    // Calculate the average of etoile and total number of avis
+    int totalAvis = aviss.size();
+    double sumEtoile = 0;
+    for (Avis a : aviss) {
+        sumEtoile += a.getEtoile();
     }
+    double avgEtoile = (totalAvis > 0) ? sumEtoile / totalAvis : 0;
+
+    // Create map items for the average and total number of avis
+    Map<String, Object> avgItem = new HashMap<>();
+    avgItem.put("Line1", "Moyenne d'avis /" + Math.round(avgEtoile));
+    model.addItem(avgItem);
+
+    Map<String, Object> totalItem = new HashMap<>();
+    totalItem.put("Line1",+ totalAvis+ "/avis");
+    model.addItem(totalItem);
+
+    // Add map items for each Avis
+    for (Avis a : aviss) {
+        Map<String, Object> item = new HashMap<>();
+        item.put("Line1", a.getId());
+        item.put("Line2", "commentaire : " + a.getCommentaire());
+        item.put("Line3", "etoile : " + a.getEtoile());
+
+        model.addItem(item);
+    }
+
+    // Attach the action listener to the MultiList
+    avisList.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            try {
+                Map<String, Object> selectedItem = (Map<String, Object>) avisList.getSelectedItem();
+                int avisId = (int) selectedItem.get("Line1");
+                Avis selectedAvis = null;
+                for (Avis a : aviss) {
+                    if (a.getId() == avisId) {
+                        selectedAvis = a;
+                        break;
+                    }
+                }
+                EditAvisForm myForm2 = new EditAvisForm(selectedAvis);
+                myForm2.show();
+            } catch (ParseException ex) {
+                System.out.println(ex);
+            }
+        }
+    });
+}
+
+
 
 }
