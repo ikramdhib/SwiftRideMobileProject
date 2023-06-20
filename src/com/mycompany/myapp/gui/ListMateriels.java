@@ -64,7 +64,7 @@ public class ListMateriels extends Form{
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if(ServiceMateriel.getInstance().deleteMateriel(m.getId())){
-                   Dialog.show("Alert","Garage Supprimer","ok",null);
+                   Dialog.show("Alert","Materiel Supprimer","ok",null);
                         }else {
                             Dialog.show("Alert","Err while connecting to server ","ok",null);
                         } 

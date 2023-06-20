@@ -38,9 +38,9 @@ import java.util.Date;
 public class UpdateMaintenance extends Form{
     
         
-    public UpdateMaintenance(int id){
+    public UpdateMaintenance(Maintenance m){
 
-        setTitle("PRENEZ UN RENDE-VOUS");
+        setTitle("Mettre a  jour le maintenance N°"+m.getId());
         
          Toolbar toolbar = getToolbar();
         Command exitCommand = new Command("Back") {
@@ -65,40 +65,22 @@ public class UpdateMaintenance extends Form{
         // Ajouter les boutons radio à un groupe
         ButtonGroup group = new ButtonGroup(radioButton1, radioButton2, radioButton3, radioButton4);
         
-         Label ltype = new Label("Maintenance :");
-         
-          RadioButton radiobtn1 = new RadioButton("Entretien");
-          RadioButton radiobtn2 = new RadioButton("Réparation");
-         ButtonGroup groupr = new ButtonGroup(radiobtn1 , radiobtn2);
+       
          
          Container buttonsContainer = new Container(new FlowLayout(Component.CENTER, Component.CENTER));
          
          buttonsContainer.addAll(radioButton1 , radioButton2 , radioButton3 , radioButton4);
          
-         Container radioContainer = new Container(new FlowLayout(Component.CENTER, Component.CENTER));
-         
-         radioContainer.addAll(radiobtn1 , radiobtn2 );
+      
          
          
-         ArrayList<Garage> garages = ServiceGarage.getInstance().getAllGarages();
-         
-        String[] names = new String[garages.size()];
-        
-        for (int i = 0; i < garages.size(); i++) {
-            names[i] =garages.get(i).getId()+" - " +garages.get(i).getMatricule_garage()+"/"+garages.get(i).getLocalisation();
-        }
-         
-         ComboBox<String> myComboBox = new ComboBox<>(names);
-         
-         
-         Button btnadd = new Button("Passer");
+         Button btnadd = new Button("Modifier");
          
          btnadd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 
-                 if(date.getDate() == null || myComboBox.getSelectedIndex() == -1 ||
-                      !group.isSelected() || !groupr.isSelected()){
+                 if(date.getDate() == null || !group.isSelected() ){
                      Dialog.show("Alert", "tous les champs sont obligatoire", "OK",null);
                  }
                  else{
@@ -116,8 +98,8 @@ public class UpdateMaintenance extends Form{
                      
                     String finalStringDate=dateString.concat(" ").concat(hour);
                      SimpleDateFormat dateFormatt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date dateWithoutTimezone;
-             dateWithoutTimezone = dateFormatt.parse(finalStringDate);
+                     Date dateWithoutTimezone;
+                      dateWithoutTimezone = dateFormatt.parse(finalStringDate);
                      
            
            // Parse l'offset de fuseau horaire à partir de la chaîne de caractères
@@ -132,29 +114,14 @@ public class UpdateMaintenance extends Form{
             calendar.add(Calendar.MINUTE, -totalOffsetMinutes);          
             
             Date finalDate = calendar.getTime();
-            
-            //recupere l'id garage
-            
-            String selectedChoice = (String) myComboBox.getSelectedItem();
-             int firstSpaceIndex = selectedChoice.indexOf(" ");
-             String garage = selectedChoice.substring(0, firstSpaceIndex);
-             
-             //recupere le type
-            int i =  groupr.getSelectedIndex();
-           Button selectedButtoni = groupr.getRadioButton(i);
-           String type = (String) selectedButtoni.getText();
-              
-                     Maintenance m = new Maintenance();
-                     m.setDate_maintenance(finalDate);
-                     m.setId_garage(Integer.parseInt(garage));
-                     m.setType(type);
-                     m.setId_voiture(id);
-                     
-                     if(ServiceMaintenace.getInstance().addMaintenance(m)){
+                         System.out.println(finalStringDate+"datedattttttt");
+                         
+                         System.out.println(m.getId()+"****8888**");
+                     if(ServiceMaintenace.getInstance().updateMaintenance(m.getId(),finalDate)){
                         Dialog.show("INFO", "Ajouter avec succes", "ok",null);
                     }
                     else{
-                         Dialog.show("alert", "Ce maintenance existe deja", "ok",null);
+                         Dialog.show("alert", "connexion error", "ok",null);
                     }
                      
                      } catch (ParseException ex) {
@@ -166,7 +133,7 @@ public class UpdateMaintenance extends Form{
             }
         });
         
-        addAll(ldate , date ,buttonsContainer ,ltype , radioContainer ,myComboBox,btnadd );
+        addAll(ldate , date ,buttonsContainer ,btnadd );
         
   
     }

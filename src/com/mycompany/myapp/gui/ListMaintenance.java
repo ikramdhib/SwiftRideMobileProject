@@ -79,7 +79,7 @@ public class ListMaintenance extends Form{
             public void actionPerformed(ActionEvent evt) {
                 
                 if(ServiceMaintenace.getInstance().deleteMaintenance(m.getId())){
-                   Dialog.show("Alert","Garage Supprimer","ok",null);
+                   Dialog.show("Alert","Maintenance Supprimer","ok",null);
                         }else {
                             Dialog.show("Alert","Err while connecting to server ","ok",null);
                         } 
@@ -101,7 +101,11 @@ public class ListMaintenance extends Form{
             @Override
             public void actionPerformed(ActionEvent evt) {
                 
-                new UpdateMaintenance(m.getId()).show();
+                Maintenance mm =ServiceMaintenace.getInstance().getMaintenance(m.getId());
+                
+                System.out.println("tyttytyytytyt"+mm);
+                
+                new UpdateMaintenance(mm).show();
             }
         });
          
