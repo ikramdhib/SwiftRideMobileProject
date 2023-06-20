@@ -136,7 +136,7 @@ public class ServiceMateriel {
         
         con.setUrl(url);
         
-        con.setPost(false);
+        con.setPost(true);
         
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override

@@ -23,13 +23,13 @@ import java.util.Map;
  * @author dhibi
  */
 public class ServiceGarage {
-    private static final String ID_PARAM = "id";
+  //  private static final String ID_PARAM = "id";
     
     ArrayList<Garage> garages;
     
     ConnectionRequest con ;
     
-    public boolean resultOK;
+    public boolean resultOK = true;
     
     //creer un var de mm type que la class 
     public static ServiceGarage instance =null ;
@@ -125,7 +125,7 @@ public class ServiceGarage {
         
         con.setUrl(url);
         
-        con.setPost(false);
+        con.setPost(true);
         
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override

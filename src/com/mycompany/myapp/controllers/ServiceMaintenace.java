@@ -369,7 +369,7 @@ public class ServiceMaintenace {
         
         con.setUrl(url);
         
-        con.setPost(false);
+        con.setPost(true);
         
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -402,15 +402,37 @@ public class ServiceMaintenace {
     }
           
           
-    public boolean updateMaintenance(Maintenance m){
+    public boolean updateMaintenance(int id , Date maintenanceDate){
         
-        String url = MaintenanceStatics.GET_ONE;
+        String url = MaintenanceStatics.UPDATE_MAINTENANCE;
         
         con.setUrl(url);
         
-        con.setPost(false);
+        con.setPost(true);
         
-        con.addArgument(url, url);
+        
+         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = dateFormat.format(maintenanceDate);
+        
+        con.addArgument("dateMaintenance", dateString);
+         con.addArgument("id", id+"");
+        
+             con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                System.out.println(con.getResponseCode()+"rrr");
+                if(con.getResponseCode()== 200){
+                     resultOK=true;
+                     System.out.println(resultOK+"****");
+                con.removeResponseCodeListener(this);
+                }
+            }
+        });
+        
+        NetworkManager.getInstance().addToQueue(con);
+        System.out.println(resultOK+"eeeeeeee");
+        
+        
         
     return resultOK ;
     }
